@@ -1,55 +1,77 @@
 $(document).ready(function () {
-    const $grid = $('.grid');
-    $grid.masonry({
+    let loadding = false;
+
+    const $grid = $('.grid').masonry({
         itemSelector: '.grid-item',
         percentPosition: true,
         columnWidth: '.grid-sizer'
     });
 
-    $.getJSON({
-        url: "http://192.168.0.111:1337/model?bPoster=true",
-    }).done(function (items) {
-        console.log(items);
-        let $items = $(items.map(function (item) {
-            return createGridItem(item);
-        }).join(""))
-
-        $items.hide();
-        $grid.append($items);
-
-        $grid.imagesLoaded().progress(function (imgLoad, image) {
-            var $item = $(image.img).parents('.grid-item');
-            $item.show();
-            $grid.masonry('appended', $item);
+    function getGirlList(params, done) {
+        $.getJSON({
+            url: "/girls",
+            data: params
+        }).done(function (items) {
+            console.log(items);
+            let $items = $(items.map(function (item) {
+                return createGridItem(item);
+            }))
+            $items.imagesLoaded(function () {
+                $grid.append($items).masonry('appended', $items);
+                if (done){
+                    done();
+                }
+            });
         });
+    }
+
+    window.onscroll = function () {
+        const bodyHeight = $('body').height();
+        const scrollHeight = window.scrollY || window.pageYOffset;
+        const screenHeight = window.screen.height;
+        if (bodyHeight - screenHeight - scrollHeight < screenHeight / 3) {
+            if (loadding === false) {
+                loadding = true;
+                let params = {
+                    page: (parseInt(sessionStorage.getItem("page")) || 1) + 1
+                }
+                getGirlList(params, function () {
+                    sessionStorage.setItem("page", params.page);
+                    loadding = false;
+                });
+            }
+        }
+    }
+
+    getGirlList({
+        page: 1
+    }, function(){
+        sessionStorage.setItem("page", 1);
     });
 
     $("body").on("click", ".grid-item", function () {
         var pswpElement = document.querySelectorAll('.pswp')[0];
-        const sModelName = $(this).data("model-name");
+        const _id = $(this).data("_id");
         $.getJSON({
-            url: `http://192.168.0.111:1337/model?sName=${sModelName}`,
+            url: `/girl?_id=${_id}`,
         }).done(function (items) {
             console.log(items);
-            items = items.map(function (item) {
+            items = items[0].imgs.map(function (item) {
                 return {
-                    src: item.sImgUrl,
+                    src: item,
                     w: 0,
                     h: 0
                 }
             })
 
-            // define options (if needed)
             var options = {
-                // optionName: 'option value'
-                // for example:
-                index: 0 // start at first slide
+                index: 0
             };
 
             // Initializes and opens PhotoSwipe
             var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
 
-            items.map(function(item){
+            items.map(function (item) {
                 var img = new Image();
                 img.onload = function () { // will get size after load
                     item.w = this.width; // set image width
@@ -78,9 +100,13 @@ $(document).ready(function () {
 })
 
 function createGridItem(item) {
-    return `
-    <div class="grid-item" data-model-name="${item.sName}">
-        <img src="${item.sImgUrl}" />
-    </div>
-    `
+    let img = document.createElement("img");
+    img.src = item.poster;
+
+    let div = document.createElement("div");
+    div.className = "grid-item";
+    div.setAttribute("data-_id", item._id);
+    div.appendChild(img);
+
+    return div;
 }
