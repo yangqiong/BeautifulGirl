@@ -38,6 +38,7 @@ $(document).ready(function () {
                 getGirlList(params, function () {
                     sessionStorage.setItem("page", params.page);
                     loadding = false;
+                    ga('send', 'event', 'page_next', '', '');
                 });
             }
         }
@@ -50,6 +51,7 @@ $(document).ready(function () {
     });
 
     $("body").on("click", ".grid-item", function () {
+        ga('send', 'event', 'img_click', '', '');
         var pswpElement = document.querySelectorAll('.pswp')[0];
         const _id = $(this).data("_id");
         $.getJSON({
@@ -95,6 +97,16 @@ $(document).ready(function () {
 
             gallery.init();
 
+            gallery.listen('afterChange', function() {
+                ga('send', 'event', 'img_view', '', '');
+            });
+
+            $("button[title=share]").onClick(function(){
+                ga('send', 'event', 'img_action', '', '');
+            })
+            $(".pswp__share-tooltip").onClick(function(){
+                ga('send', 'event', 'img_download', '', '');
+            })
         });
     })
 })
