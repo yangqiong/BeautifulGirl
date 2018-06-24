@@ -62,6 +62,17 @@ body {
   }
 }
 
+.grid-item-count {
+  position: relative;
+  right: 0px;
+  bottom: 20px;
+  text-align: right;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 2px 5px;
+  font-size: 12px;
+}
+
 .loading {
   margin: 16px 0px 10px 0px;
 }
@@ -77,6 +88,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 100%;
+  margin: 0px 2px;
 }
 
 .loading .block:nth-child(1) {
@@ -84,11 +96,11 @@ body {
 }
 
 .loading .block:nth-child(2) {
-  animation: loading-spin 1.2s ease-out infinite 0.4s;
+  animation: loading-spin 1.2s ease-out infinite 0.3s;
 }
 
 .loading .block:nth-child(3) {
-  animation: loading-spin 1.2s ease-out infinite 0.8s;
+  animation: loading-spin 1.2s ease-out infinite 0.6s;
 }
 
 @keyframes loading-spin {

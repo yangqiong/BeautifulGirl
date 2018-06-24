@@ -67,7 +67,10 @@ $(document).ready(function () {
             })
 
             var options = {
-                index: 0
+                index: 0,
+                // shareButtons: [
+                //     {id:'download', label:'Download image', url:'{{raw_image_url}}', download:true}
+                // ]
             };
 
             // Initializes and opens PhotoSwipe
@@ -101,10 +104,10 @@ $(document).ready(function () {
                 ga('send', 'event', 'img_view', '', '');
             });
 
-            $("button[title=share]").onClick(function(){
+            $("button[title=share]").on("click", function(){
                 ga('send', 'event', 'img_action', '', '');
             })
-            $(".pswp__share-tooltip").onClick(function(){
+            $(".pswp__share-tooltip").on("click", function(){
                 ga('send', 'event', 'img_download', '', '');
             })
         });
@@ -115,10 +118,17 @@ function createGridItem(item) {
     let img = document.createElement("img");
     img.src = item.poster;
 
-    let div = document.createElement("div");
-    div.className = "grid-item";
-    div.setAttribute("data-_id", item._id);
-    div.appendChild(img);
+    let imgCount = document.createElement("div");
+    imgCount.className="grid-item-count";
+    imgCount.innerHTML = item.imgs.length + " pictures";
 
-    return div;
+    let elem = document.createElement("div");
+    elem.className = "grid-item";
+    elem.setAttribute("data-_id", item._id);
+
+
+    elem.appendChild(img);
+    elem.appendChild(imgCount);
+
+    return elem;
 }
