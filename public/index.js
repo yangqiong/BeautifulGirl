@@ -120,7 +120,7 @@ function createGridItem(item) {
 
     let imgCount = document.createElement("div");
     imgCount.className="grid-item-count";
-    imgCount.innerHTML = item.imgs.length + " pictures";
+    imgCount.innerHTML = item.img_count + " pictures";
 
     let elem = document.createElement("div");
     elem.className = "grid-item";
